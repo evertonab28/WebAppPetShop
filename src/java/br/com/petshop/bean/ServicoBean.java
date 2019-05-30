@@ -18,9 +18,7 @@ import org.primefaces.PrimeFaces;
 @ViewScoped
 public class ServicoBean implements Serializable {
 
-    private EntityManager em = new JPAUtil().getEntityManager();
     private FacesMessages messages = new FacesMessages();
-
     private Servico servico;
     private final DAO<Servico> SERVICODAO = new DAO<>(Servico.class);
     private Servico servicoSelecionado;

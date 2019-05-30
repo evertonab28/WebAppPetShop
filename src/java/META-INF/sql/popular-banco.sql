@@ -18,3 +18,8 @@ insert into raca (raca) values ('Lulu da Pomerânia');
 insert into raca (raca) values ('Rottweiler');
 insert into raca (raca) values ('Bulldog Inglês');
 insert into raca (raca) values ('Lhasa Apso');
+
+-- insert into servico (descricao, valor) values ('Banho', '30.00');
+-- insert into servico (descricao, valor) values ('Tosa', '50.00');
+
+insert into animal (idade, nome, observacao, peso, porte, sexo, proprietario_id, raca_id) values ('1', 'Leia', 'obs', '1', 'pequeno', 'Femea', '1', '1');

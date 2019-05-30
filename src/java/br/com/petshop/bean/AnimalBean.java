@@ -55,7 +55,7 @@ public class AnimalBean {
                 Arrays.asList("frm:msgs", "frm:animal-tabela")
         );
     }
-    
+
     public void excluir() {
         ANIMALDAO.excluir(this.animalSelecionado);
         this.animalSelecionado = null;

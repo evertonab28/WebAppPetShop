@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,6 +27,9 @@ public class Agenda implements Serializable {
     private Animal animal;
 
     private String status;
+    
+    @Enumerated(EnumType.STRING)
+    private FormaDePagamento formaDePagamento;
 
     public Integer getId() {
         return id;
