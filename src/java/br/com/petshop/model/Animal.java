@@ -147,7 +147,7 @@ public class Animal implements Serializable {
 
     @Override
     public String toString() {
-        return "Animal{" + "id=" + id + '}';
+        return nome;
     }
 
 }

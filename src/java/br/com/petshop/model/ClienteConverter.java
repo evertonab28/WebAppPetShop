@@ -50,7 +50,8 @@ public class ClienteConverter implements Converter {
     public String getAsString(FacesContext fc, UIComponent uic, Object o) {
         Cliente cliente = new Cliente();
         cliente = (Cliente) o;
-        return cliente.getNome();
+//        return cliente.getNome();
+        return null;
     }
 
 }

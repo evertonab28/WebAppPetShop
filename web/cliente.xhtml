@@ -25,6 +25,7 @@
                     <span class="ui-separator">
                         <span class="ui-icon ui-icon-grip-dotted-vertical" />
                     </span>
+                        
                     <p:commandButton icon="ui-icon-pencil"
                                      title="Editar"
                                      process="@this" update="cliente-dialog"
@@ -52,7 +53,8 @@
             <p:dialog header="Clientes"
                       widgetVar="edicaoClienteDialog"
                       id="cliente-dialog"
-                      resizable="false" modal="true"
+                      resizable="false" 
+                      modal="true"
                       closeOnEscape="true">
 
                 <p:messages id="msgs-dialog" />

@@ -80,6 +80,7 @@ public class ClienteBean implements Serializable {
 //    public void setClienteSelecionado(Cliente clienteSelecionado) {
 //        this.clienteSelecionado = clienteSelecionado;
 //    }
+    
     public Cliente getClienteSelecionado() {
         return clienteSelecionado;
     }

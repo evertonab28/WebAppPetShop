@@ -153,5 +153,5 @@ public class AnimalBean {
         Cliente c = (Cliente) event.getObject();
         System.out.println("SELECIONADO " + c.getCPF());
     }
- 
+
 }

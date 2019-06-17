@@ -1,6 +1,5 @@
 package br.com.petshop.model;
 
-import br.com.petshop.dao.AnimalDAO;
 import br.com.petshop.dao.ClienteDAO;
 import br.com.petshop.dao.DAO;
 import java.util.List;
@@ -17,25 +16,25 @@ public class AnimalConverter implements Converter {
         return new DAO(Animal.class).listaTodos();
     }
 
+    @Override
+    public Object getAsObject(FacesContext fc, UIComponent uic, String string) {      
+
+        Animal teste = new Animal();
+        teste.setNome("Deu ruim");
+        
+        for (Animal a : getAnimais()) {
+            if (a.getNome().equals(string)) {
+                return a;
+            }
+        }
+        return teste;
+    }
 //    @Override
 //    public Object getAsObject(FacesContext fc, UIComponent uic, String string) {
-//
-//        Integer id = Integer.valueOf(string);
-//
-//        for (Cliente c : getClientes()) {
-//            if (c.getId() == id) {
-//                return c;
-//            }
-//        }
-//        return null;
+//        ClienteDAO clienteDAO = new ClienteDAO();
+//        Cliente cliente = clienteDAO.consultarPorClienteNome(string);
+//        return cliente;
 //    }
-    @Override
-    public Object getAsObject(FacesContext fc, UIComponent uic, String string) {
-
-        AnimalDAO daoAnimal = new AnimalDAO();
-        Animal animal = daoAnimal.consultarPorAnimal(string);
-        return animal;
-    }
 
 //    @Override
 //    public String getAsString(FacesContext fc, UIComponent uic, Object o) {
@@ -51,7 +50,8 @@ public class AnimalConverter implements Converter {
     public String getAsString(FacesContext fc, UIComponent uic, Object o) {
         Animal animal = new Animal();
         animal = (Animal) o;
-        return animal.getNome();
+//        return cliente.getNome();
+        return null;
     }
 
 }
