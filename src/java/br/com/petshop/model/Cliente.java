@@ -11,6 +11,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "cliente")
 public class Cliente implements Serializable {
+
+    public Cliente() {
+    }   
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -108,10 +112,13 @@ public class Cliente implements Serializable {
         return true;
     }
 
+//    @Override
+//    public String toString() {
+//        return "Cliente{" + "id=" + id + '}';
+//    }
     @Override
     public String toString() {
-        return "Cliente{" + "id=" + id + '}';
+        return nome;
     }
-    
-    
+
 }

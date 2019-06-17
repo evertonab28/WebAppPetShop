@@ -23,15 +23,13 @@
 
                 </f:facet>
                 <f:facet name="right">
-                    <!--                    <p:commandButton value="Novo" icon="fa fa fa-plus"
-                                                         process="@this" update="agendamento-dialog" 
-                                                         oncomplete="PF('edicaoAgendamentoDialog').show"/>-->
 
                     <p:commandButton icon="fa fa fa-plus"
                                      value="Novo"
-                                     process="@this" update="agendamento-dialog"
+                                     process="@this" 
+                                     update="agendamento-dialog"
                                      oncomplete="PF('edicaoAgendamentoDialog').show()">
-
+                        <p:resetInput target="agendamento-dialog" />
                     </p:commandButton>
 
                     <p:commandButton value="Editar" icon="fa fa fa-edit"/>
@@ -40,30 +38,41 @@
                 </f:facet>
             </p:toolbar>
 
-            <p:dataTable value="#{[0,0,0,0,0]}" var="agenda" emptyMessage="Nenhum agendamento localizado." rows="10"
-                         paginator="true" paginatorPosition="bottom" style="margin-top: 20px">
-                <p:column headerText="Data">
-                    <h:outputText value="20/06/2019" />
+            <p:dataTable value="#{agendaBean.agendas}" var="agenda"
+                         id="agenda-tabela"
+                         emptyMessage="Nenhum agendamento localizado." 
+                         rows="10" paginator="true" 
+                         paginatorPosition="bottom" style="margin-top: 20px"
+                         selection="#{agendaBean.agendaSelecionada}"
+                         selectionMode="single"
+                         rowKey="#{agenda.id}"
+                         >
+
+                <p:ajax event="rowSelect" update=":frm:toolbar" />
+                <p:ajax event="rowUnselect" update=":frm:toolbar" />
+
+                <p:column headerText="Data" sortBy="#{agenda.dataDoAgendamento}">
+                    <h:outputText value="#{agenda.dataDoAgendamento}" />
                 </p:column>
 
                 <p:column headerText="Hora">
-                    <h:outputText value="15:30" />
+                    <h:outputText value="#{agenda.horarioDoAgendamento}" />
                 </p:column>
 
                 <p:column headerText="Cliente">
-                    <h:outputText value="Jon Snow" />
+                    <h:outputText value="#{agenda.animal.proprietario}" />
                 </p:column>
 
                 <p:column headerText="Animal">
-                    <h:outputText value="Faísca" />
+                    <h:outputText value="#{agenda.animal}" />
                 </p:column>
 
                 <p:column headerText="Status">
-                    <h:outputText value="Finalizado" />
+                    <h:outputText value="#{agenda.status}" />
                 </p:column>
 
                 <p:column headerText="Forma de Pagamento">
-                    <h:outputText value="Dinheiro" />
+                    <h:outputText value="#{agenda.formaDePagamento}" />
                 </p:column>
 
             </p:dataTable>
@@ -71,18 +80,93 @@
             <!-- DIALOG -->
             <p:dialog header="Novo Agendamento" id="agendamento-dialog" widgetVar="edicaoAgendamentoDialog"
                       resizable="false" modal="true" closeOnEscape="true">
+                <p:messages id="msgs-dialog" />
 
                 <p:tabView style="width: 650px">
-                    <p:tab title="Agenda">
-                        
-                    </p:tab>
-                    <p:tab title="Serviços">
-                        
-                    </p:tab>
-                </p:tabView>
-                
-            </p:dialog>
 
+                    <p:tab title="Agenda">
+                        <p:panelGrid columns="2" id="panel-dialog">
+                            <p:outputLabel value="Data" for="data"/>
+                            <p:calendar id="data" value="#{agendaBean.agenda.dataDoAgendamento}"/>
+
+                            <p:outputLabel value="Hora" for="hora"/>
+                            <p:datePicker id="hora" timeOnly="true" pattern="HH:mm" value="#{agendaBean.agenda.horarioDoAgendamento}"/>
+
+                            <p:outputLabel value="Proprietário" for="proprietario"/>
+                            <p:autoComplete id="proprietario" value="#{animalBean.clienteSelecionado}" 
+                                            completeMethod="#{animalBean.completaNomeCliente}" 
+                                            var="cliente"
+                                            itemLabel="#{cliente.nome}" itemValue="#{cliente}"
+                                            converter="clienteConverter">
+                                <p:ajax event="itemSelect" 
+                                        listener="#{animalBean.handleSelect}"
+                                        
+                                        />
+                            </p:autoComplete>
+
+
+
+
+                            <p:outputLabel value="Animal" for="animalSelect"/>
+                            <h:outputText id="animalSelect" 
+                                          value="Selecionado: #{animalBean.clienteSelecionado.nome}" 
+                                          />
+                            <p:selectOneMenu id="animal" 
+                                             value="#{agendaBean.agenda.animal.id}" filter="true" style="width: 150px">
+                                <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
+                                <f:selectItems value="#{animalBean.animalPorProprietario(animalBean.clienteSelecionado)}"
+                                               var="animal"
+                                               itemLabel="#{animal.nome}"
+                                               itemValue="#{animal}"/>
+
+                            </p:selectOneMenu>
+
+
+
+
+                            <p:outputLabel value="Status" for="status"/>
+                            <p:selectOneRadio id="status" value="#{agendaBean.agenda.status}">
+                                <f:selectItem itemLabel="Em espera" itemValue="Em espera"/>
+                                <f:selectItem itemLabel="Finalizado" itemValue="Finalizado"/>
+                                <f:selectItem itemLabel="Cancelado" itemValue="Cancelado"/>
+                            </p:selectOneRadio>
+
+                            <p:outputLabel value="Forma de Pagamento" for="pagamento"/>
+                            <p:selectOneMenu id="pagamento" value="#{agendaBean.agenda.formaDePagamento}">
+                                <f:selectItem itemLabel="Selecione..."/>
+                                <f:selectItems value="#{agendaBean.formaDePagamentos}"
+                                               var="pagamento"
+                                               itemLabel="#{pagamento.descricao}"
+                                               itemValue="#{pagamento}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel/>
+                            <p:commandButton value="Salvar"
+                                             id="salvar-button"
+                                             action="#{agendaBean.salvar()}"
+                                             process="frm:agendamento-dialog"
+                                             update="frm:msgs-dialog panel-dialog"
+                                             oncomplete="if(!args.validationFailed) PF('edicaoAgendamentoDialog').hide()"/>
+                        </p:panelGrid>
+                    </p:tab>
+
+                    <p:tab title="Serviços">
+                        <p:dataTable value="#{0}">
+                            <p:column headerText="Serviços">
+                                <p:autoComplete placeholder="Informe o serviço e tecle TAB"
+                                                size="50"/>                                
+                            </p:column>
+                            <p:column headerText="Valor" style="text-align: center;width: 100px">
+                                <h:outputText value="R$ 0,00"/>
+                            </p:column>
+                            <p:columnGroup type="footer">
+                                <p:column footerText="Total" style="text-align: right"/>
+                                <p:column footerText="R$ 0,00" style="text-align: center"/>
+                            </p:columnGroup>
+                        </p:dataTable>
+                    </p:tab>
+
+                </p:tabView>
+            </p:dialog>
         </h:form>
     </ui:define>
 </ui:composition>   

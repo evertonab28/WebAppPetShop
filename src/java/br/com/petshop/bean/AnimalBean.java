@@ -5,14 +5,20 @@ import br.com.petshop.model.Animal;
 import br.com.petshop.model.Cliente;
 import br.com.petshop.model.Raca;
 import br.com.petshop.service.FacesMessages;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.context.FacesContext;
+import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.SelectEvent;
 
 @ManagedBean
-@ViewScoped
+//@ViewScoped
+@RequestScoped
 public class AnimalBean {
 
     private Animal animal;
@@ -22,6 +28,12 @@ public class AnimalBean {
     private String sexo;
     private FacesMessages messages = new FacesMessages();
     private Animal animalSelecionado;
+
+    private List<Animal> animais = new ArrayList<Animal>();
+    private List<Cliente> clientes = new ArrayList<Cliente>();
+    private DAO<Cliente> daoCliente = new DAO<>(Cliente.class);
+    private Cliente clienteSelecionado;
+    private Cliente cliente;
 
     public Animal getAnimalSelecionado() {
         return animalSelecionado;
@@ -33,7 +45,6 @@ public class AnimalBean {
 
     public void prepararSalvar() {
         animal = new Animal();
-
     }
 
     public void salvar() {
@@ -108,4 +119,39 @@ public class AnimalBean {
         this.sexo = sexo;
     }
 
+    public List<Cliente> completaNomeCliente(String query) {
+        this.clientes = daoCliente.listaTodos();
+        List<Cliente> nomes = new ArrayList<Cliente>();
+        for (Cliente c : this.clientes) {
+            if (c.getNome().startsWith(query)) {
+                nomes.add(c);
+            }
+        }
+        return nomes;
+    }
+
+    public List<Animal> animalPorProprietario(Cliente cliente) {
+        this.animais = ANIMALDAO.listaTodos();
+        List<Animal> animaisCliente = new ArrayList<Animal>();
+        for (Animal a : this.animais) {
+            if (a.getProprietario().equals(cliente)) {
+                animaisCliente.add(a);
+            }
+        }
+        return animaisCliente;
+    }
+
+    public Cliente getClienteSelecionado() {
+        return clienteSelecionado;
+    }
+
+    public void setClienteSelecionado(Cliente clienteSelecionado) {
+        this.clienteSelecionado = clienteSelecionado;
+    }
+
+    public void handleSelect(SelectEvent event) {
+        String value = (String) event.getObject();
+        System.out.println("SELECIONADO " + event.getObject());
+    }
+ 
 }

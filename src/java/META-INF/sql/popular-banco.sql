@@ -19,7 +19,11 @@ insert into raca (raca) values ('Rottweiler');
 insert into raca (raca) values ('Bulldog Inglês');
 insert into raca (raca) values ('Lhasa Apso');
 
--- insert into servico (descricao, valor) values ('Banho', '30.00');
--- insert into servico (descricao, valor) values ('Tosa', '50.00');
+insert into servico (descricao, valor) values ('Banho', '30.00');
+insert into servico (descricao, valor) values ('Tosa', '50.00');
+insert into servico (descricao, valor) values ('Tosa Higienica', '80.00');
+insert into servico (descricao, valor) values ('Taxi Dog', '30.00');
+insert into servico (descricao, valor) values ('Passeio', '35.00');
 
-insert into animal (idade, nome, observacao, peso, porte, sexo, proprietario_id, raca_id) values ('1', 'Leia', 'obs', '1', 'pequeno', 'Femea', '1', '1');
+insert into animal (idade, nome, observacao, peso, porte, sexo, url, proprietario_id, raca_id) values ('1', 'Leia', 'obs', '1', 'pequeno', 'Femea','http://s2.glbimg.com/-Zf5dYjL55YIL13Qyje1rnX7-1w=/e.glbimg.com/og/ed/f/original/2016/10/20/16169099399_77c92bb984_k.jpg', '1', '13');
+insert into animal (idade, nome, observacao, peso, porte, sexo, url, proprietario_id, raca_id) values ('10', 'Fani', 'obs', '1', 'pequeno', 'Femea','https://www.neonpetshop.com.br/blog/wp-content/uploads/2016/04/6-1-650x427.jpg', '2', '1');

@@ -3,6 +3,7 @@ package br.com.petshop.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 public class Agenda implements Serializable {
@@ -19,7 +22,12 @@ public class Agenda implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Temporal(TemporalType.DATE)
+    @Column(name = "data_agendamento")
     private Date dataDoAgendamento;
+
+    @Temporal(TemporalType.TIME)
+    @Column(name = "hora_agendamento")
     private Date horarioDoAgendamento;
 
     @ManyToOne
@@ -27,8 +35,9 @@ public class Agenda implements Serializable {
     private Animal animal;
 
     private String status;
-    
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "forma_de_pagamento")
     private FormaDePagamento formaDePagamento;
 
     public Integer getId() {
@@ -71,6 +80,14 @@ public class Agenda implements Serializable {
         this.status = status;
     }
 
+    public FormaDePagamento getFormaDePagamento() {
+        return formaDePagamento;
+    }
+
+    public void setFormaDePagamento(FormaDePagamento formaDePagamento) {
+        this.formaDePagamento = formaDePagamento;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -94,6 +111,11 @@ public class Agenda implements Serializable {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Agenda{" + "id=" + id + '}';
     }
 
 }

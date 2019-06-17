@@ -34,9 +34,11 @@ public class Animal implements Serializable {
     @ManyToOne
     @JoinColumn(name = "proprietario_id")
     private Cliente proprietario;
-    
+
     @Column(name = "observacao")
     private String observacao;
+
+    private String url;
 
     public Integer getIdade() {
         return idade;
@@ -108,6 +110,14 @@ public class Animal implements Serializable {
 
     public void setObservacao(String observacao) {
         this.observacao = observacao;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override
