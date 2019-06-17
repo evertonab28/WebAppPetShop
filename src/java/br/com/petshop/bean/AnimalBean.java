@@ -150,8 +150,8 @@ public class AnimalBean {
     }
 
     public void handleSelect(SelectEvent event) {
-        String value = (String) event.getObject();
-        System.out.println("SELECIONADO " + event.getObject());
+        Cliente c = (Cliente) event.getObject();
+        System.out.println("SELECIONADO " + c.getCPF());
     }
  
 }

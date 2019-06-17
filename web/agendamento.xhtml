@@ -97,7 +97,7 @@
                                             completeMethod="#{animalBean.completaNomeCliente}" 
                                             var="cliente"
                                             itemLabel="#{cliente.nome}" itemValue="#{cliente}"
-                                            converter="clienteConverter">
+                                            converter="clienteConverter" forceSelection="true">
                                 <p:ajax event="itemSelect" 
                                         listener="#{animalBean.handleSelect}"
                                         
@@ -111,6 +111,7 @@
                             <h:outputText id="animalSelect" 
                                           value="Selecionado: #{animalBean.clienteSelecionado.nome}" 
                                           />
+                            <p:outputLabel value="AnimalMenu" for="animal"/>
                             <p:selectOneMenu id="animal" 
                                              value="#{agendaBean.agenda.animal.id}" filter="true" style="width: 150px">
                                 <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>

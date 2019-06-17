@@ -16,24 +16,25 @@ public class ClienteConverter implements Converter {
         return new DAO(Cliente.class).listaTodos();
     }
 
+    @Override
+    public Object getAsObject(FacesContext fc, UIComponent uic, String string) {      
+
+        Cliente teste = new Cliente();
+        teste.setNome("Deu ruim");
+        
+        for (Cliente c : getClientes()) {
+            if (c.getNome().equals(string)) {
+                return c;
+            }
+        }
+        return teste;
+    }
 //    @Override
 //    public Object getAsObject(FacesContext fc, UIComponent uic, String string) {
-//
-//        Integer id = Integer.valueOf(string);
-//
-//        for (Cliente c : getClientes()) {
-//            if (c.getId() == id) {
-//                return c;
-//            }
-//        }
-//        return null;
+//        ClienteDAO clienteDAO = new ClienteDAO();
+//        Cliente cliente = clienteDAO.consultarPorClienteNome(string);
+//        return cliente;
 //    }
-    @Override
-    public Object getAsObject(FacesContext fc, UIComponent uic, String string) {
-        ClienteDAO clienteDAO = new ClienteDAO();
-        Cliente cliente = clienteDAO.consultarPorClienteNome(string);
-        return cliente;
-    }
 
 //    @Override
 //    public String getAsString(FacesContext fc, UIComponent uic, Object o) {
