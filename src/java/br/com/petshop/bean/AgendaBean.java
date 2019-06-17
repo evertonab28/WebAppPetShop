@@ -5,6 +5,7 @@ import br.com.petshop.model.Agenda;
 import br.com.petshop.model.Animal;
 import br.com.petshop.model.Cliente;
 import br.com.petshop.model.FormaDePagamento;
+import br.com.petshop.model.Servico;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import javax.faces.event.ActionEvent;
 import org.primefaces.component.tabview.Tab;
+import org.primefaces.event.FlowEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 
@@ -138,5 +140,27 @@ public class AgendaBean implements Serializable {
         System.out.println(animalSelecionado.getNome());
     }
 
-    
+//    WIZARD A PARTIR DAQUI
+    private boolean skip;
+
+    public boolean isSkip() {
+        return skip;
+    }
+
+    public void setSkip(boolean skip) {
+        this.skip = skip;
+    }
+
+    public String onFlowProcess(FlowEvent event) {
+        if (skip) {
+            skip = false;   //reset in case user goes back
+            return "confirm";
+        } else {
+            return event.getNewStep();
+        }
+    }
+//WIZARD TERMINA AQUI
+
+    private Servico servico;
+    private final DAO<Servico> SERVICODAO = new DAO<>(Servico.class);
 }

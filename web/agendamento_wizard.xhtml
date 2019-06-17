@@ -14,7 +14,7 @@
 
             <p:toolbar id="toolbar">
                 <f:facet name="left">
-                    <p:inputText placeholder="Informe um termo para pesquisa..." size="30"/>
+                    <p:inputText placeholder="WIZARD" size="30"/>
                     <p:commandButton value="Pesquisar" icon="fa fa fa-search"/>
 
                     <span class="ui-separator">
@@ -90,15 +90,17 @@
                       resizable="false" modal="true">
                 <p:messages id="msgs-dialog" />
 
-                <p:tabView style="width: 650px">
-
+                
+                <p:wizard flowListener="#{agendaBean.onFlowProcess}" nextLabel="Serviços" backLabel="Agenda">
                     <p:tab title="Agenda">
                         <p:panelGrid columns="2" id="panel-dialog">
                             <p:outputLabel value="Data" for="data"/>
-                            <p:calendar id="data" value="#{agendaBean.agenda.dataDoAgendamento}"/>
+                            <p:calendar id="data" value="#{agendaBean.agenda.dataDoAgendamento}"
+                                        required="true"/>
 
                             <p:outputLabel value="Hora" for="hora"/>
-                            <p:datePicker id="hora" timeOnly="true" pattern="HH:mm" value="#{agendaBean.agenda.horarioDoAgendamento}"/>
+                            <p:datePicker id="hora" timeOnly="true" pattern="HH:mm" value="#{agendaBean.agenda.horarioDoAgendamento}"
+                                          required="true"/>
 
                             <p:outputLabel value="Proprietário" for="proprietario"/>
                             <p:selectOneMenu id="proprietario" 
@@ -130,14 +132,14 @@
                             </p:selectOneMenu>
 
                             <p:outputLabel value="Status" for="status"/>
-                            <p:selectOneRadio id="status" value="#{agendaBean.agenda.status}">
+                            <p:selectOneRadio id="status" value="#{agendaBean.agenda.status}" required="true">
                                 <f:selectItem itemLabel="Em espera" itemValue="Em espera"/>
                                 <f:selectItem itemLabel="Finalizado" itemValue="Finalizado"/>
                                 <f:selectItem itemLabel="Cancelado" itemValue="Cancelado"/>
                             </p:selectOneRadio>
 
                             <p:outputLabel value="Forma de Pagamento" for="pagamento"/>
-                            <p:selectOneMenu id="pagamento" value="#{agendaBean.agenda.formaDePagamento}">
+                            <p:selectOneMenu id="pagamento" value="#{agendaBean.agenda.formaDePagamento}" required="true">
                                 <f:selectItem itemLabel="Selecione..."/>
                                 <f:selectItems value="#{agendaBean.formaDePagamentos}"
                                                var="pagamento"
@@ -149,7 +151,8 @@
                                              id="salvar-button"
                                              action="#{agendaBean.salvar()}"
                                              process="frm:agendamento-dialog"
-                                             update="frm:msgs-dialog"/>
+                                             update="frm:msgs-dialog"
+                                             oncomplete=""/>
                             
                         </p:panelGrid>
                     </p:tab>
@@ -169,8 +172,8 @@
                             </p:columnGroup>
                         </p:dataTable>
                     </p:tab>
-
-                </p:tabView>
+                </p:wizard>
+                
             </p:dialog>
         </h:form>
     </ui:define>
