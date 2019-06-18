@@ -12,6 +12,7 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.FlowEvent;
@@ -19,8 +20,8 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 
 @ManagedBean
-//@RequestScoped
 @SessionScoped
+//@ViewScoped
 public class AgendaBean implements Serializable {
 
     private Agenda agenda = new Agenda();

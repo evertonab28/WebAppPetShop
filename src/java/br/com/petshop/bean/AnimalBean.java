@@ -17,8 +17,8 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean
-//@ViewScoped
-@RequestScoped
+@ViewScoped
+//@RequestScoped
 public class AnimalBean {
 
     private Animal animal;
