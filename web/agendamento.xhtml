@@ -41,7 +41,7 @@
                         <f:setPropertyActionListener value="#{agendaBean.agendaSelecionada}" 
                                                      target="#{agendaBean.agenda}" />
                     </p:commandButton>
-                    
+
                     <p:commandButton value="Cancelar" icon="fa fa fa-ban"/>
                 </f:facet>
             </p:toolbar>
@@ -111,7 +111,7 @@
                                                itemLabel="#{cliente.nome}"
                                                itemValue="#{cliente}"/>
                                 <p:ajax event="itemSelect" 
-                                        listener="#{agendaBean.handleSelect}"                                       
+                                        listener="#{agendaBean.handleSelectCliente}"                                       
                                         update="animalCombo"/>
                             </p:selectOneMenu>
 
@@ -126,7 +126,7 @@
                                                itemLabel="#{animal.nome}"
                                                itemValue="#{animal}"/>
                                 <p:ajax event="itemSelect"
-                                        listener="#{agendaBean.porraDeEvento}" />
+                                        listener="#{agendaBean.umEvento}" />
                             </p:selectOneMenu>
 
                             <p:outputLabel value="Status" for="status"/>
@@ -151,16 +151,39 @@
                                              process="frm:agendamento-dialog"
                                              update="frm:msgs-dialog"
                                              oncomplete=""/>
-                            
+
                         </p:panelGrid>
                     </p:tab>
 
                     <p:tab title="Serviços">
-                        <p:dataTable value="#{0}">
+
+                        <p:panelGrid columns="2" id="panel-servicos" >
+                            <p:outputLabel value="Servico" for="serv"/>
+                            <p:selectOneMenu id="serv" 
+                                             value="#{itemServicoBean.servicoId}" filter="true" style="width: 150px">
+                                <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
+                                <f:selectItems value="#{itemServicoBean.servicos}"
+                                               var="servico"
+                                               itemLabel="#{servico.descricao}"
+                                               itemValue="#{servico.id}"/>
+
+                                <p:ajax event="itemSelect"                                         
+                                        update="itensServico"/>
+                            </p:selectOneMenu>
+                            <p:commandButton value="Add" action="#{itemServicoBean.addItem}"  process="@this"
+                                             update="itensServico">                                             
+                            </p:commandButton>                            
+                        </p:panelGrid>
+
+                        <p:dataTable value="#{itemServicoBean.item}" id="itensServico" widgetVar="dt">
                             <p:column headerText="Serviços">
-                                <p:autoComplete placeholder="Informe o serviço e tecle TAB"
-                                                size="50"/>                                
+                                <h:outputText value="#{itemServicoBean.itemServico.servico.descricao}" />
+                                <!--                                <p:autoComplete placeholder="Informe o serviço e tecle TAB"
+                                                                                size="50"/>                                -->
                             </p:column>
+
+
+
                             <p:column headerText="Valor" style="text-align: center;width: 100px">
                                 <h:outputText value="R$ 0,00"/>
                             </p:column>
