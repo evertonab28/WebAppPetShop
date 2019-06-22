@@ -35,7 +35,7 @@ public class AgendaBean implements Serializable {
     private FacesMessages messages = new FacesMessages();
     private Agenda agenda = new Agenda();
     private DAO<Agenda> agendaDao = new DAO<>(Agenda.class);
-    private Agenda agendaSelecionada;
+    private Agenda agendaSelecionada = new Agenda();
 
     private List<Cliente> clientes = new ArrayList<Cliente>();
     //private List<Servico> servicos = new ArrayList<Servico>();
@@ -111,14 +111,14 @@ public class AgendaBean implements Serializable {
         if (id == null) {
             this.agenda = agendaDao.salvarComRetorno(this.agenda);
             operacao = "salva";
-        } else{
+        } else {
             this.agenda = agendaDao.salvarComRetorno(this.agenda);
             operacao = "editada";
         }
 
         messages.info("Agenda " + operacao + " com sucesso!");
         PrimeFaces.current().ajax()
-                .update(Arrays.asList("frm:msgs-dialog"));
+                .update(Arrays.asList("frm:msgs-dialog", "frm:agenda-tabela"));
     }
 
     public void salvarItem() {
@@ -252,5 +252,15 @@ public class AgendaBean implements Serializable {
         }
     }
 //WIZARD TERMINA AQUI
+
+    public Boolean enableTab() {
+        Integer id = agenda.getId();
+        if (id == null || agendaSelecionada.getId() == null) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 
 }

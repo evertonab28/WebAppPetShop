@@ -56,8 +56,8 @@
                          rowKey="#{agenda.id}"
                          >
 
-                <p:ajax event="rowSelect" update=":frm:toolbar" />
-                <p:ajax event="rowUnselect" update=":frm:toolbar" />
+                <p:ajax event="rowSelect" update=":frm:toolbar :frm:agendamento-dialog" />
+                <p:ajax event="rowUnselect" update=":frm:toolbar :frm:agendamento-dialog" />
 
                 <p:column headerText="Data" sortBy="#{agenda.dataDoAgendamento}">
                     <h:outputText value="#{agenda.dataDoAgendamento}" />
@@ -91,7 +91,7 @@
                       resizable="false" modal="true">
                 <p:messages id="msgs-dialog" />
 
-                <p:tabView style="width: 650px">
+                <p:tabView style="width: 650px" widgetVar="tabWidgetVar">
 
                     <p:tab title="Agenda" id="tab-agenda">
                         <p:panelGrid columns="2" id="panel-dialog">
@@ -151,12 +151,13 @@
                                              action="#{agendaBean.salvarAgenda()}"
                                              process="tab-agenda"
                                              update=""
-                                             oncomplete=""/>
+                                             oncomplete=""
+                                             onclick="PF('tabWidgetVar').select(1)"/>
 
                         </p:panelGrid>
                     </p:tab>
 
-                    <p:tab title="Serviços">
+                    <p:tab title="Serviços" disabled="#{agendaBean.enableTab()}" id="tab-servicos">
                         <p:messages id="msgs-servicos"/>
                         <p:panelGrid columns="2" id="panel-servicos" >
                             <p:outputLabel value="Servico" for="serv"/>
