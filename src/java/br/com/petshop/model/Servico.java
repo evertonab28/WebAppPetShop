@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Servico implements Serializable {
+public class Servico implements Serializable, SampleEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +22,7 @@ public class Servico implements Serializable {
     @Column(precision = 10, scale = 2)
     private BigDecimal valor = BigDecimal.ZERO;
 
+    @Override
     public Integer getId() {
         return id;
     }
@@ -70,10 +71,10 @@ public class Servico implements Serializable {
         }
         return true;
     }
-
-    @Override
-    public String toString() {
-        return "Servico{" + "id=" + id + '}';
-    }
-
+//
+//    @Override
+//    public String toString() {
+//        return "Servico{" + "id=" + id + '}';
+//    }
+      
 }

@@ -7,8 +7,12 @@ import br.com.petshop.model.Cliente;
 import br.com.petshop.model.FormaDePagamento;
 import br.com.petshop.model.ItemServico;
 import br.com.petshop.model.Servico;
+import br.com.petshop.service.FacesMessages;
+import static com.sun.org.apache.xml.internal.serializer.utils.Utils.messages;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
@@ -16,6 +20,7 @@ import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.FlowEvent;
 import org.primefaces.event.SelectEvent;
@@ -27,29 +32,45 @@ import org.primefaces.event.TabChangeEvent;
 //@ViewScoped
 public class AgendaBean implements Serializable {
 
+    private FacesMessages messages = new FacesMessages();
     private Agenda agenda = new Agenda();
     private DAO<Agenda> agendaDao = new DAO<>(Agenda.class);
     private Agenda agendaSelecionada;
 
     private List<Cliente> clientes = new ArrayList<Cliente>();
-    private List<Servico> servicos = new ArrayList<Servico>();
+    //private List<Servico> servicos = new ArrayList<Servico>();
     private DAO<Cliente> daoCliente = new DAO<>(Cliente.class);
     private List<Animal> animais = new ArrayList<Animal>();
+    private List<ItemServico> itens = new ArrayList<ItemServico>();
     private final DAO<Animal> ANIMALDAO = new DAO<>(Animal.class);
     private final DAO<Servico> SERVICODAO = new DAO<>(Servico.class);
+    private final DAO<ItemServico> ITEMSERVICODAO = new DAO<>(ItemServico.class);
     private Cliente clienteSelecionado;
     private Animal animalSelecionado;
-    private Servico servico;
-    private ItemServico itemServico = new ItemServico();
+    private Servico servico = new Servico();
+    private ItemServico item = new ItemServico();
+    private DAO<ItemServico> itemDao = new DAO<>(ItemServico.class);
 
     private Integer animalId;
 
-    public ItemServico getItemServico() {
-        return itemServico;
+    public Servico getServico() {
+        return servico;
     }
 
-    public void setItemServico(ItemServico itemServico) {
-        this.itemServico = itemServico;
+    public void setServico(Servico servico) {
+        this.servico = servico;
+    }
+
+    public ItemServico getItem() {
+        return item;
+    }
+
+    public List<Servico> getListaServicos() {
+        return new DAO(Servico.class).listaTodos();
+    }
+
+    public void setItem(ItemServico itemServico) {
+        this.item = itemServico;
     }
 
     public Integer getAnimalId() {
@@ -80,9 +101,64 @@ public class AgendaBean implements Serializable {
         agenda = new Agenda();
     }
 
-    public void salvar() {
+    public void salvarAgenda() {
+        Integer id = this.agenda.getId();
+        String operacao = "";
+
         this.agenda.setAnimal(animalSelecionado);
-        this.agenda = agendaDao.salvarComRetorno(agenda);
+        this.agenda.setAnimal(animalSelecionado);
+
+        if (id == null) {
+            this.agenda = agendaDao.salvarComRetorno(this.agenda);
+            operacao = "salva";
+        } else{
+            this.agenda = agendaDao.salvarComRetorno(this.agenda);
+            operacao = "editada";
+        }
+
+        messages.info("Agenda " + operacao + " com sucesso!");
+        PrimeFaces.current().ajax()
+                .update(Arrays.asList("frm:msgs-dialog"));
+    }
+
+    public void salvarItem() {
+        Integer id = agenda.getId();
+        String operacao = "";
+
+        if (id == null) {
+            operacao = "Salve a agenda primeiro!";
+        } else {
+            item.setAgenda(agenda);
+            item.setServico(servico);
+            item.setValor(servico.getValor());
+            itemDao.salvar(item);
+            operacao = "Item adicionado com sucesso!";
+
+            item = new ItemServico();
+        }
+
+        messages.info(operacao);
+        PrimeFaces.current().ajax()
+                .update(Arrays.asList("frm:msgs-dialog", "itensServico"));
+    }
+
+    public List<ItemServico> getItensDaAgenda() {
+        this.itens = ITEMSERVICODAO.listaTodos();
+        List<ItemServico> lista = new ArrayList<ItemServico>();
+
+        for (ItemServico item : this.itens) {
+            if (item.getAgenda().equals(agenda)) {
+                lista.add(item);
+            }
+        }
+        return lista;
+    }
+
+    public BigDecimal total() {
+        BigDecimal soma = getItensDaAgenda().stream().map(ItemServico::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return soma;
     }
 
     public FormaDePagamento[] getFormaDePagamentos() {
@@ -126,17 +202,6 @@ public class AgendaBean implements Serializable {
             }
         }
         return nomes;
-    }
-
-    public List<Servico> completaItemServico(String query) {
-        this.servicos = SERVICODAO.listaTodos();
-        List<Servico> itens = new ArrayList<Servico>();
-        for (Servico s : this.servicos) {
-            if (s.getDescricao().startsWith(query)) {
-                itens.add(s);
-            }
-        }
-        return itens;
     }
 
     public List<Animal> animalPorProprietario(Cliente cliente) {

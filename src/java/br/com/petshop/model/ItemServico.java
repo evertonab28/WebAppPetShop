@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class ItemServico implements Serializable {
+public class ItemServico implements Serializable, SampleEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +24,12 @@ public class ItemServico implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "servico_id")
-    private Servico servico;
+    private Servico servicoAgenda;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal valor = BigDecimal.ZERO;
 
+    @Override
     public Integer getId() {
         return id;
     }
@@ -46,11 +47,11 @@ public class ItemServico implements Serializable {
     }
 
     public Servico getServico() {
-        return servico;
+        return servicoAgenda;
     }
 
     public void setServico(Servico servico) {
-        this.servico = servico;
+        this.servicoAgenda = servico;
     }
 
     public BigDecimal getValor() {

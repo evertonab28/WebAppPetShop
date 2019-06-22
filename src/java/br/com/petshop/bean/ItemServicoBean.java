@@ -68,15 +68,17 @@ public class ItemServicoBean implements Serializable {
         return new DAO(ItemServico.class).listaTodos();
     }
 
-    public void addItem() {
-        ItemServico itemServico = new ItemServico();
-        Servico servico = new DAO<Servico>(Servico.class).porId(this.servicoId);
-        itemServico.setServico(servico);
-        //itemServico.setAgenda(agenda);
-        //itemServico.setValor(servico.getValor());
-
-        itens.add(itemServico);
-    }
+    
+    //NAO SERÁ UTILIZADO
+//    public void addItem() {
+//        ItemServico itemServico = new ItemServico();
+//        Servico servico = new DAO<Servico>(Servico.class).porId(this.servicoId);
+//        itemServico.setServico(servico);
+//        //itemServico.setAgenda(agenda);
+//        //itemServico.setValor(servico.getValor());
+//
+//        itens.add(itemServico);
+//    }
 
     public void handleSelectServico(SelectEvent event) {
         Servico s = (Servico) event.getObject();

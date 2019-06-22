@@ -37,7 +37,7 @@
                                      process="@this" update="agendamento-dialog"
                                      oncomplete="PF('edicaoAgendamentoDialog').show()"
                                      disabled="#{agendaBean.agendaSelecionada == null}">
-                        <p:resetInput target="animal-dialog" />
+                        <p:resetInput target="agendamento-dialog" />
                         <f:setPropertyActionListener value="#{agendaBean.agendaSelecionada}" 
                                                      target="#{agendaBean.agenda}" />
                     </p:commandButton>
@@ -68,7 +68,7 @@
                 </p:column>
 
                 <p:column headerText="Cliente">
-                    <h:outputText value="#{agenda.animal.proprietario}" />
+                    <h:outputText value="#{agenda.animal.proprietario.nome}" />
                 </p:column>
 
                 <p:column headerText="Animal">
@@ -86,13 +86,14 @@
             </p:dataTable>
 
             <!-- DIALOG -->
-            <p:dialog header="Novo Agendamento" id="agendamento-dialog" widgetVar="edicaoAgendamentoDialog"
+            <p:dialog header="Novo Agendamento" id="agendamento-dialog" 
+                      widgetVar="edicaoAgendamentoDialog"
                       resizable="false" modal="true">
                 <p:messages id="msgs-dialog" />
 
                 <p:tabView style="width: 650px">
 
-                    <p:tab title="Agenda">
+                    <p:tab title="Agenda" id="tab-agenda">
                         <p:panelGrid columns="2" id="panel-dialog">
                             <p:outputLabel value="Data" for="data"/>
                             <p:calendar id="data" value="#{agendaBean.agenda.dataDoAgendamento}"/>
@@ -104,7 +105,7 @@
                             <p:selectOneMenu id="proprietario" 
                                              value="#{agendaBean.clienteSelecionado}" filter="true" 
                                              style="width: 180px"
-                                             converter="clienteConverter">
+                                             converter="generic">
                                 <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
                                 <f:selectItems value="#{agendaBean.cliente}"
                                                var="cliente"
@@ -119,7 +120,7 @@
                             <p:selectOneMenu id="animalCombo" 
                                              value="#{agendaBean.animalSelecionado}"
                                              filter="true" style="width: 150px"                                            
-                                             converter="animalConverter">
+                                             converter="generic">
                                 <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
                                 <f:selectItems value="#{agendaBean.animalPorProprietario(agendaBean.clienteSelecionado)}"
                                                var="animal"
@@ -147,49 +148,53 @@
                             <p:outputLabel/>
                             <p:commandButton value="Salvar"
                                              id="salvar-button"
-                                             action="#{agendaBean.salvar()}"
-                                             process="frm:agendamento-dialog"
-                                             update="frm:msgs-dialog"
+                                             action="#{agendaBean.salvarAgenda()}"
+                                             process="tab-agenda"
+                                             update=""
                                              oncomplete=""/>
 
                         </p:panelGrid>
                     </p:tab>
 
                     <p:tab title="Serviços">
-
+                        <p:messages id="msgs-servicos"/>
                         <p:panelGrid columns="2" id="panel-servicos" >
                             <p:outputLabel value="Servico" for="serv"/>
                             <p:selectOneMenu id="serv" 
-                                             value="#{itemServicoBean.servicoId}" filter="true" style="width: 150px">
+                                             value="#{agendaBean.servico}" 
+                                             filter="true" 
+                                             style="width: 150px"
+                                             converter="generic">
                                 <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
-                                <f:selectItems value="#{itemServicoBean.servicos}"
+                                <f:selectItems value="#{agendaBean.listaServicos}"
                                                var="servico"
                                                itemLabel="#{servico.descricao}"
-                                               itemValue="#{servico.id}"/>
+                                               itemValue="#{servico}"/>
 
                                 <p:ajax event="itemSelect"                                         
                                         update="itensServico"/>
                             </p:selectOneMenu>
-                            <p:commandButton value="Add" action="#{itemServicoBean.addItem}"  process="@this"
+                            <p:commandButton value="Adicionar" action="#{agendaBean.salvarItem()}"  
+                                             process="@this"
                                              update="itensServico">                                             
                             </p:commandButton>                            
                         </p:panelGrid>
 
-                        <p:dataTable value="#{itemServicoBean.item}" id="itensServico" widgetVar="dt">
+                        <p:dataTable value="#{agendaBean.itensDaAgenda}" 
+                                     id="itensServico" 
+                                     widgetVar="dt"
+                                     var="servico"
+                                     rowKey="#{servico.id}">
                             <p:column headerText="Serviços">
-                                <h:outputText value="#{itemServicoBean.itemServico.servico.descricao}" />
-                                <!--                                <p:autoComplete placeholder="Informe o serviço e tecle TAB"
-                                                                                size="50"/>                                -->
+                                <h:outputText value="#{servico.servico.descricao}" />
                             </p:column>
 
-
-
                             <p:column headerText="Valor" style="text-align: center;width: 100px">
-                                <h:outputText value="R$ 0,00"/>
+                                <h:outputText value="R$ #{servico.valor}"/>
                             </p:column>
                             <p:columnGroup type="footer">
                                 <p:column footerText="Total" style="text-align: right"/>
-                                <p:column footerText="R$ 0,00" style="text-align: center"/>
+                                <p:column footerText="R$ #{agendaBean.total()}" style="text-align: center"/>
                             </p:columnGroup>
                         </p:dataTable>
                     </p:tab>

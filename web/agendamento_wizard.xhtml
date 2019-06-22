@@ -106,7 +106,7 @@
                             <p:selectOneMenu id="proprietario" 
                                              value="#{agendaBean.clienteSelecionado}" filter="true" 
                                              style="width: 180px"
-                                             converter="clienteConverter">
+                                             converter="generic">
                                 <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
                                 <f:selectItems value="#{agendaBean.cliente}"
                                                var="cliente"
@@ -121,7 +121,7 @@
                             <p:selectOneMenu id="animalCombo" 
                                              value="#{agendaBean.animalSelecionado}"
                                              filter="true" style="width: 150px"                                            
-                                             converter="animalConverter">
+                                             converter="generic">
                                 <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
                                 <f:selectItems value="#{agendaBean.animalPorProprietario(agendaBean.clienteSelecionado)}"
                                                var="animal"
@@ -149,7 +149,7 @@
                             <p:outputLabel/>
                             <p:commandButton value="Salvar"
                                              id="salvar-button"
-                                             action="#{agendaBean.salvar()}"
+                                             action="#{agendaBean.salvarAgenda()}"
                                              process="frm:agendamento-dialog"
                                              update="frm:msgs-dialog"
                                              oncomplete=""/>
@@ -168,7 +168,7 @@
                                                 value="#{itemServicoBean.servico}"
                                                 itemLabel="#{servico.descricao}"
                                                 itemValue="#{servico}"
-                                                converter="itemServicoConverter">
+                                                converter="generic">
 
                                     <p:ajax event="itemSelect" 
                                             listener="#{itemServicoBean.handleSelectItemServico}"                                       

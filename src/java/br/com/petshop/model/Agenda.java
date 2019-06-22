@@ -16,7 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-public class Agenda implements Serializable {
+public class Agenda implements Serializable, SampleEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +40,7 @@ public class Agenda implements Serializable {
     @Column(name = "forma_de_pagamento")
     private FormaDePagamento formaDePagamento;
 
+    @Override
     public Integer getId() {
         return id;
     }

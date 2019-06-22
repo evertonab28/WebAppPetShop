@@ -11,7 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Animal implements Serializable {
+public class Animal implements Serializable, SampleEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,6 +64,7 @@ public class Animal implements Serializable {
         this.sexo = sexo;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
