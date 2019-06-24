@@ -42,11 +42,17 @@
                                                      target="#{agendaBean.agenda}" />
                     </p:commandButton>
 
-                    <p:commandButton value="Cancelar" icon="fa fa fa-ban"/>
+                    <p:commandButton value="Cancelar" icon="fa fa fa-ban"
+                                     process="@this"
+                                     disabled="#{agendaBean.agendaSelecionada == null}"
+                                     action="#{agendaBean.cancelarAgenda()}"
+                                     update="agenda-tabela">
+                        <p:resetInput target="agendamento-dialog" />
+                    </p:commandButton>
                 </f:facet>
             </p:toolbar>
 
-            <p:dataTable value="#{agendaBean.agendas}" var="agenda"
+            <p:dataTable value="#{agendaBean.agendas()}" var="agenda"
                          id="agenda-tabela"
                          emptyMessage="Nenhum agendamento localizado." 
                          rows="10" paginator="true" 
@@ -59,6 +65,10 @@
                 <p:ajax event="rowSelect" update=":frm:toolbar :frm:agendamento-dialog" />
                 <p:ajax event="rowUnselect" update=":frm:toolbar :frm:agendamento-dialog" />
 
+                <p:column headerText="ID">
+                    <h:outputText value="#{agenda.id}" />
+                </p:column>
+                
                 <p:column headerText="Data" sortBy="#{agenda.dataDoAgendamento}">
                     <h:outputText value="#{agenda.dataDoAgendamento}" />
                 </p:column>
@@ -177,7 +187,8 @@
                             </p:selectOneMenu>
                             <p:commandButton value="Adicionar" action="#{agendaBean.salvarItem()}"  
                                              process="@this"
-                                             update="itensServico">                                             
+                                             update="itensServico"
+                                             style="margin-bottom: 5px">                                             
                             </p:commandButton>                            
                         </p:panelGrid>
 
@@ -198,6 +209,12 @@
                                 <p:column footerText="R$ #{agendaBean.total()}" style="text-align: center"/>
                             </p:columnGroup>
                         </p:dataTable>
+
+                        <p:commandButton value="Finalizar"
+                                         style="margin-top: 20px; float: right"
+                                         oncomplete="PF('edicaoAgendamentoDialog').hide()"
+                                         update="panel-dialog">                            
+                        </p:commandButton>
                     </p:tab>
 
                 </p:tabView>

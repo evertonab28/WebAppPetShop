@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
@@ -28,8 +29,8 @@ import org.primefaces.event.TabChangeEvent;
 
 @ManagedBean
 //@SessionScoped
-@ApplicationScoped
-//@ViewScoped
+//@ApplicationScoped
+@ViewScoped
 public class AgendaBean implements Serializable {
 
     private FacesMessages messages = new FacesMessages();
@@ -142,6 +143,17 @@ public class AgendaBean implements Serializable {
                 .update(Arrays.asList("frm:msgs-dialog", "itensServico"));
     }
 
+    public void cancelarAgenda() {
+        agendaSelecionada.setStatus("Cancelado");
+        this.agendaSelecionada = agendaDao.salvarComRetorno(this.agendaSelecionada);
+        String operacao = "Agenda cancelada!";
+
+        messages.info(operacao);
+        PrimeFaces.current().ajax()
+                .update(Arrays.asList("frm:msgs", "frm:agenda-tabela"));
+        agendaSelecionada = null;
+    }
+
     public List<ItemServico> getItensDaAgenda() {
         this.itens = ITEMSERVICODAO.listaTodos();
         List<ItemServico> lista = new ArrayList<ItemServico>();
@@ -172,9 +184,16 @@ public class AgendaBean implements Serializable {
     public void setAgenda(Agenda agenda) {
         this.agenda = agenda;
     }
+    
+    private List<Agenda> agendas;
+    
+    @PostConstruct
+    public void construct(){
+        agendas = agendaDao.listaTodos();
+    }
 
-    public List<Agenda> getAgendas() {
-        return new DAO(Agenda.class).listaTodos();
+    public List<Agenda> agendas() {
+        return agendas;
     }
 
     public Cliente getClienteSelecionado() {
