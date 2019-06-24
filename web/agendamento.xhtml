@@ -14,12 +14,11 @@
 
             <p:toolbar id="toolbar">
                 <f:facet name="left">
-                    <p:inputText placeholder="Informe um termo para pesquisa..." size="30"/>
-                    <p:commandButton value="Pesquisar" icon="fa fa fa-search"/>
-
-                    <span class="ui-separator">
-                        <span class="ui-icon ui-icon-grip-dotted-vertical"/>
-                    </span>
+                    <!--                    <p:inputText placeholder="Informe um termo para pesquisa..." size="30"/>
+                                        <p:commandButton value="Pesquisar" icon="fa fa fa-search"/>-->
+                    <!--                    <span class="ui-separator">
+                                            <span class="ui-icon ui-icon-grip-dotted-vertical"/>
+                                        </span>-->
 
                 </f:facet>
                 <f:facet name="right">
@@ -46,21 +45,34 @@
                                      process="@this"
                                      disabled="#{agendaBean.agendaSelecionada == null}"
                                      action="#{agendaBean.cancelarAgenda()}"
-                                     update="agenda-tabela">
+                                     update="agendamento-tabela">
                         <p:resetInput target="agendamento-dialog" />
                     </p:commandButton>
-                </f:facet>
+                </f:facet>  
             </p:toolbar>
 
-            <p:dataTable value="#{agendaBean.agendas()}" var="agenda"
-                         id="agenda-tabela"
+            <p:dataTable value="#{agendaBean.agendas}" var="agenda" 
+                         widgetVar="tabelaAgendas"
+                         id="agendamento-tabela"
                          emptyMessage="Nenhum agendamento localizado." 
                          rows="10" paginator="true" 
                          paginatorPosition="bottom" style="margin-top: 20px"
                          selection="#{agendaBean.agendaSelecionada}"
                          selectionMode="single"
                          rowKey="#{agenda.id}"
+                         filteredValue="#{agendaBean.agendasFiltradas}"
                          >
+
+                <f:facet name="header">
+                    <div align="left">
+                        <p:outputPanel>
+                            <h:outputText value="Pesquisar: " />
+                            <p:inputText id="globalFilter" onkeyup="PF('tabelaAgendas').filter()" 
+                                         style="width:150px" placeholder="Informe um termo"/>
+                        </p:outputPanel>
+                    </div>
+                    
+                </f:facet>
 
                 <p:ajax event="rowSelect" update=":frm:toolbar :frm:agendamento-dialog" />
                 <p:ajax event="rowUnselect" update=":frm:toolbar :frm:agendamento-dialog" />
@@ -68,28 +80,30 @@
                 <p:column headerText="ID">
                     <h:outputText value="#{agenda.id}" />
                 </p:column>
-                
+
                 <p:column headerText="Data" sortBy="#{agenda.dataDoAgendamento}">
-                    <h:outputText value="#{agenda.dataDoAgendamento}" />
+                    <h:outputText value="#{agenda.dataDoAgendamento}" >
+                        <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
+                    </h:outputText>
                 </p:column>
 
-                <p:column headerText="Hora">
+                <p:column headerText="Hora" filterBy="#{agenda.dataDoAgendamento}" filterStyle="display: none">
                     <h:outputText value="#{agenda.horarioDoAgendamento}" />
                 </p:column>
 
-                <p:column headerText="Cliente">
+                <p:column headerText="Cliente" filterBy="#{agenda.animal.proprietario.nome}" filterStyle="display: none">
                     <h:outputText value="#{agenda.animal.proprietario.nome}" />
                 </p:column>
 
-                <p:column headerText="Animal">
+                <p:column headerText="Animal" filterBy="#{agenda.animal}" filterStyle="display: none">
                     <h:outputText value="#{agenda.animal}" />
                 </p:column>
 
-                <p:column headerText="Status">
+                <p:column headerText="Status" filterBy="#{agenda.status}" filterStyle="display: none">
                     <h:outputText value="#{agenda.status}" />
                 </p:column>
 
-                <p:column headerText="Forma de Pagamento">
+                <p:column headerText="Forma de Pagamento" filterBy="#{agenda.formaDePagamento}" filterStyle="display: none">
                     <h:outputText value="#{agenda.formaDePagamento.descricao}" />
                 </p:column>
 
@@ -113,11 +127,11 @@
 
                             <p:outputLabel value="Proprietário" for="proprietario"/>
                             <p:selectOneMenu id="proprietario" 
-                                             value="#{agendaBean.clienteSelecionado}" filter="true" 
+                                             value="#{agendaBean.cliente}" filter="true" 
                                              style="width: 180px"
                                              converter="generic">
                                 <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
-                                <f:selectItems value="#{agendaBean.cliente}"
+                                <f:selectItems value="#{agendaBean.clientes}"
                                                var="cliente"
                                                itemLabel="#{cliente.nome}"
                                                itemValue="#{cliente}"/>
@@ -128,11 +142,11 @@
 
                             <p:outputLabel value="Animal" for="animalCombo"/>
                             <p:selectOneMenu id="animalCombo" 
-                                             value="#{agendaBean.animalSelecionado}"
+                                             value="#{agendaBean.animal}"
                                              filter="true" style="width: 150px"                                            
                                              converter="generic">
                                 <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
-                                <f:selectItems value="#{agendaBean.animalPorProprietario(agendaBean.clienteSelecionado)}"
+                                <f:selectItems value="#{agendaBean.animalPorProprietario(agendaBean.cliente)}"
                                                var="animal"
                                                itemLabel="#{animal.nome}"
                                                itemValue="#{animal}"/>
@@ -212,8 +226,9 @@
 
                         <p:commandButton value="Finalizar"
                                          style="margin-top: 20px; float: right"
+                                         action="#{agendaBean.finalizar()}"
                                          oncomplete="PF('edicaoAgendamentoDialog').hide()"
-                                         update="panel-dialog">                            
+                                         update="frm:agendamento-tabela">                            
                         </p:commandButton>
                     </p:tab>
 

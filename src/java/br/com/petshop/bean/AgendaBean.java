@@ -38,8 +38,7 @@ public class AgendaBean implements Serializable {
     private DAO<Agenda> agendaDao = new DAO<>(Agenda.class);
     private Agenda agendaSelecionada = new Agenda();
 
-    private List<Cliente> clientes = new ArrayList<Cliente>();
-    //private List<Servico> servicos = new ArrayList<Servico>();
+    private List<Cliente> clientes = new ArrayList<Cliente>();    
     private DAO<Cliente> daoCliente = new DAO<>(Cliente.class);
     private List<Animal> animais = new ArrayList<Animal>();
     private List<ItemServico> itens = new ArrayList<ItemServico>();
@@ -47,10 +46,19 @@ public class AgendaBean implements Serializable {
     private final DAO<Servico> SERVICODAO = new DAO<>(Servico.class);
     private final DAO<ItemServico> ITEMSERVICODAO = new DAO<>(ItemServico.class);
     private Cliente clienteSelecionado;
-    private Animal animalSelecionado;
+    private Animal animal = new Animal();
     private Servico servico = new Servico();
     private ItemServico item = new ItemServico();
     private DAO<ItemServico> itemDao = new DAO<>(ItemServico.class);
+    private Cliente cliente = new Cliente();
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
 
     private Integer animalId;
 
@@ -82,12 +90,12 @@ public class AgendaBean implements Serializable {
         this.animalId = animalId;
     }
 
-    public Animal getAnimalSelecionado() {
-        return animalSelecionado;
+    public Animal getAnimal() {
+        return animal;
     }
 
-    public void setAnimalSelecionado(Animal animalSelecionado) {
-        this.animalSelecionado = animalSelecionado;
+    public void setAnimal(Animal animal) {
+        this.animal = animal;
     }
 
     public Agenda getAgendaSelecionada() {
@@ -106,8 +114,8 @@ public class AgendaBean implements Serializable {
         Integer id = this.agenda.getId();
         String operacao = "";
 
-        this.agenda.setAnimal(animalSelecionado);
-        this.agenda.setAnimal(animalSelecionado);
+        this.agenda.setAnimal(animal);
+//        this.agenda.setAnimal(animalSelecionado);
 
         if (id == null) {
             this.agenda = agendaDao.salvarComRetorno(this.agenda);
@@ -119,7 +127,7 @@ public class AgendaBean implements Serializable {
 
         messages.info("Agenda " + operacao + " com sucesso!");
         PrimeFaces.current().ajax()
-                .update(Arrays.asList("frm:msgs-dialog", "frm:agenda-tabela"));
+                .update(Arrays.asList("frm:msgs-dialog"));
     }
 
     public void salvarItem() {
@@ -143,6 +151,16 @@ public class AgendaBean implements Serializable {
                 .update(Arrays.asList("frm:msgs-dialog", "itensServico"));
     }
 
+    public void finalizar() {
+        agendaSelecionada = null;
+        agenda = null;
+        animal = null;
+        cliente = null;
+
+        PrimeFaces.current().ajax()
+                .update(Arrays.asList("frm:msgs-dialog", "frm:agendamento-tabela"));
+    }
+
     public void cancelarAgenda() {
         agendaSelecionada.setStatus("Cancelado");
         this.agendaSelecionada = agendaDao.salvarComRetorno(this.agendaSelecionada);
@@ -150,7 +168,7 @@ public class AgendaBean implements Serializable {
 
         messages.info(operacao);
         PrimeFaces.current().ajax()
-                .update(Arrays.asList("frm:msgs", "frm:agenda-tabela"));
+                .update(Arrays.asList("frm:msgs", "frm:agendamento-tabela"));
         agendaSelecionada = null;
     }
 
@@ -184,16 +202,30 @@ public class AgendaBean implements Serializable {
     public void setAgenda(Agenda agenda) {
         this.agenda = agenda;
     }
-    
+
     private List<Agenda> agendas;
+
+//    @PostConstruct    
+//    public void construct() {
+//        agendas = agendaDao.listaTodos();
+//    }
+//
+//    public List<Agenda> agendas() {
+//        return agendas;
+//    }
     
-    @PostConstruct
-    public void construct(){
-        agendas = agendaDao.listaTodos();
+    public List<Agenda> getAgendas() {
+        return new DAO(Agenda.class).listaTodos();
     }
 
-    public List<Agenda> agendas() {
-        return agendas;
+    private List<Agenda> agendasFiltradas;
+
+    public List<Agenda> getAgendasFiltradas() {
+        return agendasFiltradas;
+    }
+
+    public void setAgendasFiltradas(List<Agenda> agendasFiltradas) {
+        this.agendasFiltradas = agendasFiltradas;
     }
 
     public Cliente getClienteSelecionado() {
@@ -204,7 +236,7 @@ public class AgendaBean implements Serializable {
         this.clienteSelecionado = clienteSelecionado;
     }
 
-    public List<Cliente> getCliente() {
+    public List<Cliente> getClientes() {
         return new DAO(Cliente.class).listaTodos();
     }
 
@@ -212,17 +244,16 @@ public class AgendaBean implements Serializable {
         return new DAO(Animal.class).listaTodos();
     }
 
-    public List<Cliente> completaNomeCliente(String query) {
-        this.clientes = daoCliente.listaTodos();
-        List<Cliente> nomes = new ArrayList<Cliente>();
-        for (Cliente c : this.clientes) {
-            if (c.getNome().startsWith(query)) {
-                nomes.add(c);
-            }
-        }
-        return nomes;
-    }
-
+//    public List<Cliente> completaNomeCliente(String query) {
+//        this.clientes = daoCliente.listaTodos();
+//        List<Cliente> nomes = new ArrayList<Cliente>();
+//        for (Cliente c : this.clientes) {
+//            if (c.getNome().startsWith(query)) {
+//                nomes.add(c);
+//            }
+//        }
+//        return nomes;
+//    }
     public List<Animal> animalPorProprietario(Cliente cliente) {
         this.animais = ANIMALDAO.listaTodos();
         List<Animal> animaisCliente = new ArrayList<Animal>();
@@ -240,7 +271,7 @@ public class AgendaBean implements Serializable {
         System.out.println("SELECIONADO " + c);
         System.out.println("----");
         System.out.println("Cliente Selecionado");
-        System.out.println(clienteSelecionado);
+        System.out.println(cliente);
 
     }
 
@@ -248,7 +279,7 @@ public class AgendaBean implements Serializable {
         Animal a = (Animal) e.getObject();
         System.out.println("---------");
         System.out.println(a);
-        System.out.println(animalSelecionado.getNome());
+        System.out.println(animal.getNome());
     }
 
 //    WIZARD A PARTIR DAQUI
@@ -281,5 +312,6 @@ public class AgendaBean implements Serializable {
         }
 
     }
+
 
 }

@@ -47,7 +47,7 @@
             </p:toolbar>
 
             <p:dataTable value="#{agendaBean.agendas}" var="agenda"
-                         id="agenda-tabela"
+                         id="agendamento-tabela"
                          emptyMessage="Nenhum agendamento localizado." 
                          rows="10" paginator="true" 
                          paginatorPosition="bottom" style="margin-top: 20px"
@@ -108,7 +108,7 @@
                                              style="width: 180px"
                                              converter="generic">
                                 <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
-                                <f:selectItems value="#{agendaBean.cliente}"
+                                <f:selectItems value="#{agendaBean.clientes}"
                                                var="cliente"
                                                itemLabel="#{cliente.nome}"
                                                itemValue="#{cliente}"/>
@@ -119,7 +119,7 @@
 
                             <p:outputLabel value="Animal" for="animalCombo"/>
                             <p:selectOneMenu id="animalCombo" 
-                                             value="#{agendaBean.animalSelecionado}"
+                                             value="#{agendaBean.animal}"
                                              filter="true" style="width: 150px"                                            
                                              converter="generic">
                                 <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
