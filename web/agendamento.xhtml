@@ -39,12 +39,23 @@
                         <p:resetInput target="agendamento-dialog" />
                         <f:setPropertyActionListener value="#{agendaBean.agendaSelecionada}" 
                                                      target="#{agendaBean.agenda}" />
+                        <f:setPropertyActionListener value="#{agendaBean.agenda.animal.proprietario}" 
+                                                     target="#{agendaBean.cliente}" />
+                        <f:setPropertyActionListener value="#{agendaBean.agenda.animal}" 
+                                                     target="#{agendaBean.animal}" />
                     </p:commandButton>
 
                     <p:commandButton value="Cancelar" icon="fa fa fa-ban"
                                      process="@this"
                                      disabled="#{agendaBean.agendaSelecionada == null}"
-                                     action="#{agendaBean.cancelarAgenda()}"
+                                     action="#{agendaBean.cancelarAgendamento()}"
+                                     update="agendamento-tabela">
+                        <p:resetInput target="agendamento-dialog" />
+                    </p:commandButton>
+                    <p:commandButton value="Finalizar" icon="fa fa fa-check-square-o"
+                                     process="@this"
+                                     disabled="#{agendaBean.agendaSelecionada == null}"
+                                     action="#{agendaBean.finalizarAgendamento()}"
                                      update="agendamento-tabela">
                         <p:resetInput target="agendamento-dialog" />
                     </p:commandButton>
@@ -71,7 +82,7 @@
                                          style="width:150px" placeholder="Informe um termo"/>
                         </p:outputPanel>
                     </div>
-                    
+
                 </f:facet>
 
                 <p:ajax event="rowSelect" update=":frm:toolbar :frm:agendamento-dialog" />
@@ -224,9 +235,9 @@
                             </p:columnGroup>
                         </p:dataTable>
 
-                        <p:commandButton value="Finalizar"
+                        <p:commandButton value="Fechar"
                                          style="margin-top: 20px; float: right"
-                                         action="#{agendaBean.finalizar()}"
+                                         action="#{agendaBean.fechar()}"
                                          oncomplete="PF('edicaoAgendamentoDialog').hide()"
                                          update="frm:agendamento-tabela">                            
                         </p:commandButton>

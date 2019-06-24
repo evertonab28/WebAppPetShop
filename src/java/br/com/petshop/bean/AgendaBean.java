@@ -38,7 +38,7 @@ public class AgendaBean implements Serializable {
     private DAO<Agenda> agendaDao = new DAO<>(Agenda.class);
     private Agenda agendaSelecionada = new Agenda();
 
-    private List<Cliente> clientes = new ArrayList<Cliente>();    
+    private List<Cliente> clientes = new ArrayList<Cliente>();
     private DAO<Cliente> daoCliente = new DAO<>(Cliente.class);
     private List<Animal> animais = new ArrayList<Animal>();
     private List<ItemServico> itens = new ArrayList<ItemServico>();
@@ -151,25 +151,37 @@ public class AgendaBean implements Serializable {
                 .update(Arrays.asList("frm:msgs-dialog", "itensServico"));
     }
 
-    public void finalizar() {
+    public void fechar() {
         agendaSelecionada = null;
         agenda = null;
         animal = null;
         cliente = null;
 
         PrimeFaces.current().ajax()
-                .update(Arrays.asList("frm:msgs-dialog", "frm:agendamento-tabela"));
+                .update(Arrays.asList("frm:msgs-dialog", "frm:agendamento-tabela", "frm:toolbar"));
     }
 
-    public void cancelarAgenda() {
+    public void cancelarAgendamento() {
         agendaSelecionada.setStatus("Cancelado");
-        this.agendaSelecionada = agendaDao.salvarComRetorno(this.agendaSelecionada);
-        String operacao = "Agenda cancelada!";
+        agendaDao.alterar(this.agendaSelecionada);
+        agendaSelecionada = null;
+        String operacao = "Agendamento cancelado!";
 
         messages.info(operacao);
         PrimeFaces.current().ajax()
-                .update(Arrays.asList("frm:msgs", "frm:agendamento-tabela"));
+                .update(Arrays.asList("frm:msgs", "frm:agendamento-tabela", "frm:toolbar"));
+
+    }
+
+    public void finalizarAgendamento() {
+        agendaSelecionada.setStatus("Finalizado");
+        agendaDao.alterar(this.agendaSelecionada);
         agendaSelecionada = null;
+        String operacao = "Agendamento finalizado!";
+
+        messages.info(operacao);
+        PrimeFaces.current().ajax()
+                .update(Arrays.asList("frm:msgs", "frm:agendamento-tabela", "frm:toolbar"));
     }
 
     public List<ItemServico> getItensDaAgenda() {
@@ -213,7 +225,6 @@ public class AgendaBean implements Serializable {
 //    public List<Agenda> agendas() {
 //        return agendas;
 //    }
-    
     public List<Agenda> getAgendas() {
         return new DAO(Agenda.class).listaTodos();
     }
@@ -312,6 +323,5 @@ public class AgendaBean implements Serializable {
         }
 
     }
-
 
 }
