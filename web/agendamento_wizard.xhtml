@@ -112,8 +112,7 @@
                                                var="cliente"
                                                itemLabel="#{cliente.nome}"
                                                itemValue="#{cliente}"/>
-                                <p:ajax event="itemSelect" 
-                                        listener="#{agendaBean.handleSelectCliente}"                                       
+                                <p:ajax event="itemSelect"                                                                           
                                         update="animalCombo"/>
                             </p:selectOneMenu>
 
@@ -126,9 +125,7 @@
                                 <f:selectItems value="#{agendaBean.animalPorProprietario(agendaBean.clienteSelecionado)}"
                                                var="animal"
                                                itemLabel="#{animal.nome}"
-                                               itemValue="#{animal}"/>
-                                <p:ajax event="itemSelect"
-                                        listener="#{agendaBean.umEvento}" />
+                                               itemValue="#{animal}"/>                                
                             </p:selectOneMenu>
 
                             <p:outputLabel value="Status" for="status"/>

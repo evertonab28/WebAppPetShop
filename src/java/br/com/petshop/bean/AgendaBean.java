@@ -8,24 +8,16 @@ import br.com.petshop.model.FormaDePagamento;
 import br.com.petshop.model.ItemServico;
 import br.com.petshop.model.Servico;
 import br.com.petshop.service.FacesMessages;
-import static com.sun.org.apache.xml.internal.serializer.utils.Utils.messages;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
-import javax.faces.event.ActionEvent;
 import org.primefaces.PrimeFaces;
-import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.FlowEvent;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.event.TabChangeEvent;
+
 
 @ManagedBean
 //@SessionScoped
@@ -35,22 +27,21 @@ public class AgendaBean implements Serializable {
 
     private FacesMessages messages = new FacesMessages();
     private Agenda agenda = new Agenda();
-    private DAO<Agenda> agendaDao = new DAO<>(Agenda.class);
-    private Agenda agendaSelecionada = new Agenda();
-
-    private List<Cliente> clientes = new ArrayList<Cliente>();
-    private DAO<Cliente> daoCliente = new DAO<>(Cliente.class);
-    private List<Animal> animais = new ArrayList<Animal>();
-    private List<ItemServico> itens = new ArrayList<ItemServico>();
-    private final DAO<Animal> ANIMALDAO = new DAO<>(Animal.class);
-    private final DAO<Servico> SERVICODAO = new DAO<>(Servico.class);
-    private final DAO<ItemServico> ITEMSERVICODAO = new DAO<>(ItemServico.class);
-    private Cliente clienteSelecionado;
     private Animal animal = new Animal();
     private Servico servico = new Servico();
     private ItemServico item = new ItemServico();
-    private DAO<ItemServico> itemDao = new DAO<>(ItemServico.class);
     private Cliente cliente = new Cliente();
+    private Agenda agendaSelecionada = new Agenda();
+
+    private final DAO<Agenda> agendaDao = new DAO<>(Agenda.class);
+    private final DAO<Animal> ANIMALDAO = new DAO<>(Animal.class);
+    private final DAO<ItemServico> ITEMSERVICODAO = new DAO<>(ItemServico.class);
+    private final DAO<Cliente> daoCliente = new DAO<>(Cliente.class);
+    private final DAO<ItemServico> itemDao = new DAO<>(ItemServico.class);
+
+    private List<Cliente> clientes = new ArrayList<Cliente>();
+    private List<Animal> animais = new ArrayList<Animal>();
+    private List<ItemServico> itens = new ArrayList<ItemServico>();
 
     public Cliente getCliente() {
         return cliente;
@@ -59,8 +50,6 @@ public class AgendaBean implements Serializable {
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
-
-    private Integer animalId;
 
     public Servico getServico() {
         return servico;
@@ -74,20 +63,8 @@ public class AgendaBean implements Serializable {
         return item;
     }
 
-    public List<Servico> getListaServicos() {
-        return new DAO(Servico.class).listaTodos();
-    }
-
     public void setItem(ItemServico itemServico) {
         this.item = itemServico;
-    }
-
-    public Integer getAnimalId() {
-        return animalId;
-    }
-
-    public void setAnimalId(Integer animalId) {
-        this.animalId = animalId;
     }
 
     public Animal getAnimal() {
@@ -106,16 +83,73 @@ public class AgendaBean implements Serializable {
         this.agendaSelecionada = agendaSelecionada;
     }
 
+    public Agenda getAgenda() {
+        return agenda;
+    }
+
+    public void setAgenda(Agenda agenda) {
+        this.agenda = agenda;
+    }
+
+    public List<Servico> getListaServicos() {
+        return new DAO(Servico.class).listaTodos();
+    }
+
+    public List<ItemServico> getItensDaAgenda() {
+        this.itens = ITEMSERVICODAO.listaTodos();
+        List<ItemServico> lista = new ArrayList<ItemServico>();
+
+        for (ItemServico item : this.itens) {
+            if (item.getAgenda().equals(agenda)) {
+                lista.add(item);
+            }
+        }
+        return lista;
+    }
+
+    public List<Cliente> getClientes() {
+        return new DAO(Cliente.class).listaTodos();
+    }
+
+    public List<Animal> getAnimalLista() {
+        return new DAO(Animal.class).listaTodos();
+    }
+
+    public List<Animal> animalPorProprietario(Cliente cliente) {
+        this.animais = ANIMALDAO.listaTodos();
+        List<Animal> animaisCliente = new ArrayList<Animal>();
+        for (Animal a : this.animais) {
+            if (a.getProprietario().equals(cliente)) {
+                animaisCliente.add(a);
+            }
+        }
+        return animaisCliente;
+    }
+
+    public List<Agenda> getAgendas() {
+        return new DAO(Agenda.class).listaTodos();
+    }
+
+    private List<Agenda> agendasFiltradas;
+
+    public List<Agenda> getAgendasFiltradas() {
+        return agendasFiltradas;
+    }
+
+    public void setAgendasFiltradas(List<Agenda> agendasFiltradas) {
+        this.agendasFiltradas = agendasFiltradas;
+    }
+
     public void prepararSalvar() {
         agenda = new Agenda();
+        cliente = new Cliente();
+        animal = new Animal();
     }
 
     public void salvarAgenda() {
         Integer id = this.agenda.getId();
         String operacao = "";
-
         this.agenda.setAnimal(animal);
-//        this.agenda.setAnimal(animalSelecionado);
 
         if (id == null) {
             this.agenda = agendaDao.salvarComRetorno(this.agenda);
@@ -127,7 +161,7 @@ public class AgendaBean implements Serializable {
 
         messages.info("Agenda " + operacao + " com sucesso!");
         PrimeFaces.current().ajax()
-                .update(Arrays.asList("frm:msgs-dialog"));
+                .update(Arrays.asList("frm:msgs-dialog", "frm:agendamento-tabela"));
     }
 
     public void salvarItem() {
@@ -142,7 +176,6 @@ public class AgendaBean implements Serializable {
             item.setValor(servico.getValor());
             itemDao.salvar(item);
             operacao = "Item adicionado com sucesso!";
-
             item = new ItemServico();
         }
 
@@ -170,7 +203,6 @@ public class AgendaBean implements Serializable {
         messages.info(operacao);
         PrimeFaces.current().ajax()
                 .update(Arrays.asList("frm:msgs", "frm:agendamento-tabela", "frm:toolbar"));
-
     }
 
     public void finalizarAgendamento() {
@@ -184,22 +216,9 @@ public class AgendaBean implements Serializable {
                 .update(Arrays.asList("frm:msgs", "frm:agendamento-tabela", "frm:toolbar"));
     }
 
-    public List<ItemServico> getItensDaAgenda() {
-        this.itens = ITEMSERVICODAO.listaTodos();
-        List<ItemServico> lista = new ArrayList<ItemServico>();
-
-        for (ItemServico item : this.itens) {
-            if (item.getAgenda().equals(agenda)) {
-                lista.add(item);
-            }
-        }
-        return lista;
-    }
-
-    public BigDecimal total() {
+    public BigDecimal totalValorServicos() {
         BigDecimal soma = getItensDaAgenda().stream().map(ItemServico::getValor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
         return soma;
     }
 
@@ -207,90 +226,13 @@ public class AgendaBean implements Serializable {
         return FormaDePagamento.values();
     }
 
-    public Agenda getAgenda() {
-        return agenda;
-    }
-
-    public void setAgenda(Agenda agenda) {
-        this.agenda = agenda;
-    }
-
-    private List<Agenda> agendas;
-
-//    @PostConstruct    
-//    public void construct() {
-//        agendas = agendaDao.listaTodos();
-//    }
-//
-//    public List<Agenda> agendas() {
-//        return agendas;
-//    }
-    public List<Agenda> getAgendas() {
-        return new DAO(Agenda.class).listaTodos();
-    }
-
-    private List<Agenda> agendasFiltradas;
-
-    public List<Agenda> getAgendasFiltradas() {
-        return agendasFiltradas;
-    }
-
-    public void setAgendasFiltradas(List<Agenda> agendasFiltradas) {
-        this.agendasFiltradas = agendasFiltradas;
-    }
-
-    public Cliente getClienteSelecionado() {
-        return clienteSelecionado;
-    }
-
-    public void setClienteSelecionado(Cliente clienteSelecionado) {
-        this.clienteSelecionado = clienteSelecionado;
-    }
-
-    public List<Cliente> getClientes() {
-        return new DAO(Cliente.class).listaTodos();
-    }
-
-    public List<Animal> getAnimalLista() {
-        return new DAO(Animal.class).listaTodos();
-    }
-
-//    public List<Cliente> completaNomeCliente(String query) {
-//        this.clientes = daoCliente.listaTodos();
-//        List<Cliente> nomes = new ArrayList<Cliente>();
-//        for (Cliente c : this.clientes) {
-//            if (c.getNome().startsWith(query)) {
-//                nomes.add(c);
-//            }
-//        }
-//        return nomes;
-//    }
-    public List<Animal> animalPorProprietario(Cliente cliente) {
-        this.animais = ANIMALDAO.listaTodos();
-        List<Animal> animaisCliente = new ArrayList<Animal>();
-        for (Animal a : this.animais) {
-            if (a.getProprietario().equals(cliente)) {
-                animaisCliente.add(a);
-            }
+    public Boolean enableTab() {
+        Integer id = agenda.getId();
+        if (id == null || agendaSelecionada.getId() == null) {
+            return true;
+        } else {
+            return false;
         }
-        return animaisCliente;
-    }
-
-    public void handleSelectCliente(SelectEvent event) {
-        Cliente c = (Cliente) event.getObject();
-        System.out.println("Objeto");
-        System.out.println("SELECIONADO " + c);
-        System.out.println("----");
-        System.out.println("Cliente Selecionado");
-        System.out.println(cliente);
-
-    }
-
-    public void umEvento(SelectEvent e) {
-        Animal a = (Animal) e.getObject();
-        System.out.println("---------");
-        System.out.println(a);
-        System.out.println(animal.getNome());
     }
 
 //    WIZARD A PARTIR DAQUI
@@ -313,15 +255,4 @@ public class AgendaBean implements Serializable {
         }
     }
 //WIZARD TERMINA AQUI
-
-    public Boolean enableTab() {
-        Integer id = agenda.getId();
-        if (id == null || agendaSelecionada.getId() == null) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
-
 }
