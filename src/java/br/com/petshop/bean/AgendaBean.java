@@ -18,7 +18,6 @@ import javax.faces.bean.ViewScoped;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FlowEvent;
 
-
 @ManagedBean
 //@SessionScoped
 //@ApplicationScoped
@@ -32,6 +31,7 @@ public class AgendaBean implements Serializable {
     private ItemServico item = new ItemServico();
     private Cliente cliente = new Cliente();
     private Agenda agendaSelecionada = new Agenda();
+    private ItemServico itemServicoSelecionado = new ItemServico();
 
     private final DAO<Agenda> agendaDao = new DAO<>(Agenda.class);
     private final DAO<Animal> ANIMALDAO = new DAO<>(Animal.class);
@@ -89,6 +89,14 @@ public class AgendaBean implements Serializable {
 
     public void setAgenda(Agenda agenda) {
         this.agenda = agenda;
+    }
+
+    public ItemServico getItemServicoSelecionado() {
+        return itemServicoSelecionado;
+    }
+
+    public void setItemServicoSelecionado(ItemServico itemServicoSelecionado) {
+        this.itemServicoSelecionado = itemServicoSelecionado;
     }
 
     public List<Servico> getListaServicos() {
@@ -175,11 +183,21 @@ public class AgendaBean implements Serializable {
             item.setServico(servico);
             item.setValor(servico.getValor());
             itemDao.salvar(item);
-            operacao = "Item adicionado com sucesso!";
+            operacao = "Servico adicionado com sucesso!";
             item = new ItemServico();
         }
 
         messages.info(operacao);
+        PrimeFaces.current().ajax()
+                .update(Arrays.asList("frm:msgs-dialog", "itensServico"));
+    }
+
+    public void removerItem() {
+        itemDao.excluir(this.itemServicoSelecionado);
+        itemServicoSelecionado = null;
+
+        getItensDaAgenda();
+        messages.info("Serviço removido!");
         PrimeFaces.current().ajax()
                 .update(Arrays.asList("frm:msgs-dialog", "itensServico"));
     }

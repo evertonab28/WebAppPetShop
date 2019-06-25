@@ -45,11 +45,11 @@
                                      action="#{agendaBean.cancelarAgendamento()}"
                                      onclick="PF('tabWidgetVar').select(0)"
                                      update="agendamento-tabela">
-                        
+
                         <p:confirm icon="ui-icon-alert"
                                    header="Confirmar Cancelamento"
                                    message="Tem Certeza que deseja cancelar o agendamento de #{agendaBean.agendaSelecionada.animal}?"/>
-                        
+
                         <p:resetInput target="agendamento-dialog" />
                     </p:commandButton>
                     <p:commandButton value="Finalizar" icon="fa fa fa-check-square-o"
@@ -58,11 +58,11 @@
                                      action="#{agendaBean.finalizarAgendamento()}"
                                      onclick="PF('tabWidgetVar').select(0)"
                                      update="agendamento-tabela">
-                        
+
                         <p:confirm icon="ui-icon-alert"
                                    header="Confirmar Finalização"
                                    message="Tem Certeza que deseja finalizar o agendamento de #{agendaBean.agendaSelecionada.animal}?"/>
-                        
+
                         <p:resetInput target="agendamento-dialog" />
                     </p:commandButton>
                 </f:facet>  
@@ -133,7 +133,7 @@
                       resizable="false" modal="true">
                 <p:messages id="msgs-dialog" />
 
-                <p:tabView style="width: 650px" widgetVar="tabWidgetVar">
+                <p:tabView style="width: 650px" widgetVar="tabWidgetVar" id="tabview">
 
                     <p:tab title="Agenda" id="tab-agenda">
                         <p:panelGrid columns="2" id="panel-dialog">
@@ -201,60 +201,83 @@
                     </p:tab>
 
                     <p:tab title="Serviços" disabled="#{agendaBean.enableTab()}" id="tab-servicos">                        
-                        <p:messages id="msgs-servicos"/>
+                        <h:form id="frm-serv">
+                            <p:messages id="msgs-servicos"/>
 
-                        <p:panelGrid columns="2" id="panel-servicos" >
-                            <p:outputLabel value="Servico" for="serv"/>
-                            <p:selectOneMenu id="serv" 
-                                             value="#{agendaBean.servico}" 
-                                             filter="true" 
-                                             style="width: 150px"
-                                             converter="generic">
-                                <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
-                                <f:selectItems value="#{agendaBean.listaServicos}"
-                                               var="servico"
-                                               itemLabel="#{servico.descricao}"
-                                               itemValue="#{servico}"/>
+                            <p:panelGrid columns="2" id="panel-servicos" >
+                                <p:outputLabel value="Servico" for="serv"/>
+                                <p:selectOneMenu id="serv" 
+                                                 value="#{agendaBean.servico}" 
+                                                 filter="true" 
+                                                 style="width: 150px"
+                                                 converter="generic">
+                                    <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
+                                    <f:selectItems value="#{agendaBean.listaServicos}"
+                                                   var="servico"
+                                                   itemLabel="#{servico.descricao}"
+                                                   itemValue="#{servico}"/>
 
-                                <p:ajax event="itemSelect"                                         
-                                        update="itensServico"/>
-                            </p:selectOneMenu>
+                                    <p:ajax event="itemSelect"                                         
+                                            update="itensServico"/>
+                                </p:selectOneMenu>
+                            </p:panelGrid>
 
-                            <p:commandButton value="Adicionar" action="#{agendaBean.salvarItem()}"  
-                                             process="@this"
-                                             update="itensServico"
-                                             style="margin-bottom: 5px">                                             
-                            </p:commandButton>                            
-                        </p:panelGrid>
 
-                        <p:dataTable value="#{agendaBean.itensDaAgenda}"
-                                     emptyMessage="Nenhum serviço adicionado."
-                                     id="itensServico" 
-                                     widgetVar="dt"
-                                     var="servico"
-                                     paginator="false"
-                                     rowKey="#{servico.id}">
+                            <p:toolbar id="toolbar-serv">
 
-                            <p:column headerText="Serviços">
-                                <h:outputText value="#{servico.servico.descricao}" />
-                            </p:column>
+                                <f:facet name="left">
+                                    <p:commandButton value="Adicionar" action="#{agendaBean.salvarItem()}"  
+                                                     process="@this"
+                                                     update="itensServico"
+                                                     style="margin-bottom: 5px">                                             
+                                    </p:commandButton>          
+                                </f:facet>
 
-                            <p:column headerText="Valor" style="text-align: center;width: 100px">
-                                <h:outputText value="R$ #{servico.valor}"/>
-                            </p:column>
-                            <p:columnGroup type="footer">
-                                <p:column footerText="Total" style="text-align: right"/>
-                                <p:column footerText="R$ #{agendaBean.totalValorServicos()}" style="text-align: center"/>
-                            </p:columnGroup>
-                        </p:dataTable>
+                                <f:facet name="right">
+                                    <p:commandButton value="Remover" action="#{agendaBean.removerItem()}"  
+                                                     process="@this"
+                                                     update="itensServico"
+                                                     style="margin-bottom: 5px"
+                                                     disabled="#{agendaBean.itemServicoSelecionado == null}">                                             
+                                    </p:commandButton> 
+                                </f:facet>
 
-                        <p:commandButton value="Fechar"
-                                         style="margin-top: 20px; float: right"
-                                         action="#{agendaBean.fechar()}"
-                                         oncomplete="PF('edicaoAgendamentoDialog').hide()"
-                                         update="frm:agendamento-tabela">                            
-                        </p:commandButton>
+                            </p:toolbar>
 
+                            <p:dataTable value="#{agendaBean.itensDaAgenda}"
+                                         emptyMessage="Nenhum serviço adicionado."
+                                         id="itensServico" 
+                                         widgetVar="dt"
+                                         var="servico"
+                                         paginator="false"
+                                         rowKey="#{servico.id}"
+                                         selection="#{agendaBean.itemServicoSelecionado}"
+                                         selectionMode="single">
+
+                                <p:column headerText="Serviços">
+                                    <h:outputText value="#{servico.servico.descricao}" />
+                                </p:column>
+
+                                <p:column headerText="Valor" style="text-align: center;width: 100px">
+                                    <h:outputText value="R$ #{servico.valor}"/>
+                                </p:column>
+                                <p:columnGroup type="footer">
+                                    <p:column footerText="Total" style="text-align: right"/>
+                                    <p:column footerText="R$ #{agendaBean.totalValorServicos()}" style="text-align: center"/>
+                                </p:columnGroup>
+
+                                <p:ajax event="rowSelect" update="frm:tabview:frm-serv:toolbar-serv"/>
+                                <p:ajax event="rowUnselect" update="frm:tabview:frm-serv:toolbar-serv"/>
+
+                            </p:dataTable>
+
+                            <p:commandButton value="Fechar"
+                                             style="margin-top: 20px; float: right"
+                                             action="#{agendaBean.fechar()}"
+                                             oncomplete="PF('edicaoAgendamentoDialog').hide()"
+                                             update="frm:agendamento-tabela">                            
+                            </p:commandButton>
+                        </h:form>
                     </p:tab>
                 </p:tabView>
             </p:dialog>
