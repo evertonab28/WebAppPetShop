@@ -65,7 +65,7 @@
                                  required="true"
                                  value="#{clienteBean.cliente.nome}" />
                     <p:outputLabel value="RG" for="rg" />
-                    <p:inputMask mask="999.999.999-9" id="rg"
+                    <p:inputMask mask="999.999.999" id="rg"
                                  required="true"
                                  value="#{clienteBean.cliente.RG}"/>
                     <p:outputLabel value="CPF" for="cpf" />
@@ -113,7 +113,7 @@
                 <p:ajax event="rowSelect" update=":frm:toolbar" />
                 <p:ajax event="rowUnselect" update=":frm:toolbar" />
 
-                <p:column headerText="ID">
+                <p:column headerText="ID" width="40">
                     <h:outputText value="#{cliente.id}" />
                 </p:column>
                 <p:column headerText="Nome" width="250" 

@@ -224,10 +224,17 @@ public class AgendaBean implements Serializable {
     }
 
     public void finalizarAgendamento() {
-        agendaSelecionada.setStatus("Finalizado");
-        agendaDao.alterar(this.agendaSelecionada);
-        agendaSelecionada = null;
-        String operacao = "Agendamento finalizado!";
+        String operacao = "";
+
+        if (agendaSelecionada.getStatus().equals("Cancelado")) {
+            operacao = "Uma agendamento cancelado não pode ser finalizado!";
+        } else {
+
+            agendaSelecionada.setStatus("Finalizado");
+            agendaDao.alterar(this.agendaSelecionada);
+            agendaSelecionada = null;
+            operacao = "Agendamento finalizado!";
+        }
 
         messages.info(operacao);
         PrimeFaces.current().ajax()

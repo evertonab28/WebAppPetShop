@@ -38,7 +38,7 @@ public class ClienteBean implements Serializable {
         Integer id = this.cliente.getId();
         String operacao = "";
 
-        if (id == 0) {
+        if (id == null) {
             clienteDAO.salvar(this.cliente);
             operacao = "salvo";
         } else {
